@@ -20,6 +20,25 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Shopify integration (future)
+
+The app uses a simple catalog adapter in `services/catalog.ts` with a feature flag:
+
+```
+NEXT_PUBLIC_CATALOG_SOURCE=mock
+```
+
+Set it to `shopify` to route calls through `services/shopifyAdapter.ts` (stubs only today).
+
+When connecting the Storefront API, add:
+
+```
+SHOPIFY_STOREFRONT_ENDPOINT=https://your-shop.myshopify.com/api/2024-01/graphql.json
+SHOPIFY_STOREFRONT_TOKEN=your_storefront_access_token
+```
+
+Then implement the mapping in `services/shopifyAdapter.ts` to return internal `Product` models.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
