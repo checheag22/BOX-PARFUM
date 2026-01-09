@@ -1,3 +1,7 @@
+"use client";
+
+export const dynamic = "force-dynamic";
+
 import { FlyerCarousel } from "@/components/flyer-carousel";
 import { CollectionCarousel } from "@/components/collection-carousel";
 import { CatalogView } from "@/app/catalog/catalog-view";
