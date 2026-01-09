@@ -1,11 +1,6 @@
-import type { Metadata } from "next";
-import { CatalogView } from "@/app/catalog/catalog-view";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Catálogo | Box Parfum",
-  description:
-    "Explora perfumes seleccionados con filtros por marca, género y concentración.",
-};
+import { CatalogView } from "@/app/catalog/catalog-view";
 
 export default function CatalogPage() {
   return <CatalogView />;
