@@ -2,6 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
+import { Suspense } from "react";
 import { FlyerCarousel } from "@/components/flyer-carousel";
 import { CollectionCarousel } from "@/components/collection-carousel";
 import { CatalogView } from "@/app/catalog/catalog-view";
@@ -44,7 +45,9 @@ export default function Home() {
             ))}
           </div>
         </section>
-        <CatalogView showHeading={false} showSearch={false} />
+        <Suspense fallback={null}>
+          <CatalogView showHeading={false} showSearch={false} />
+        </Suspense>
       </section>
     </div>
   );
