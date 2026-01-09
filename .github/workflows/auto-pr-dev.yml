@@ -1,0 +1,59 @@
+name: Auto PR from dev to main
+
+on:
+  push:
+    branches:
+      - dev
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create PR if needed
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const base = "main";
+            const head = "dev";
+
+            const compare = await github.rest.repos.compareCommits({
+              owner,
+              repo,
+              base,
+              head,
+            });
+
+            if (compare.data.ahead_by === 0) {
+              core.info("No changes between dev and main; skipping PR.");
+              return;
+            }
+
+            const prs = await github.rest.pulls.list({
+              owner,
+              repo,
+              state: "open",
+              base,
+              head: `${owner}:${head}`,
+            });
+
+            if (prs.data.length > 0) {
+              core.info(`PR already exists: ${prs.data[0].html_url}`);
+              return;
+            }
+
+            const pr = await github.rest.pulls.create({
+              owner,
+              repo,
+              base,
+              head,
+              title: "Auto PR: dev -> main",
+              body: "PR automático generado al hacer push a `dev`.",
+            });
+
+            core.info(`Created PR: ${pr.data.html_url}`);
