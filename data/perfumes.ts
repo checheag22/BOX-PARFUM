@@ -162,7 +162,7 @@ export const perfumes = [
     slug: "turathi-blue",
     brand: "Afnan",
     name: "Turathi Blue",
-    price: 799.4,
+    price: 800,
     currency: "MXN",
     image: "/images/perfumes/1132246196.avif",
     hoverImage: "/images/perfumes/Afnan-turathi-blue-90ml-Eau-de-Parfum.webp",
