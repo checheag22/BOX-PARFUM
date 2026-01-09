@@ -65,6 +65,25 @@ export function FlyerCarousel() {
           )}
         </div>
       </div>
+      <div className="flex items-center justify-center gap-2 px-3">
+        {slides.map((slide, index) => (
+          <button
+            key={slide.src}
+            type="button"
+            onClick={() => setActiveIndex(index)}
+            className={`h-1.5 rounded-full transition-all ${
+              index === activeIndex
+                ? "w-10 bg-black/70"
+                : "w-6 bg-black/20 hover:bg-black/40"
+            }`}
+            aria-label={`Ir al slide ${index + 1}`}
+            aria-current={index === activeIndex ? "true" : undefined}
+          />
+        ))}
+        <span className="sr-only">
+          {`Slide ${activeIndex + 1} de ${slides.length}`}
+        </span>
+      </div>
     </section>
   );
 }
