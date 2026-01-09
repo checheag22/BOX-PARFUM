@@ -1,229 +1,232 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { ProductCard } from "@/components/product-card";
-import { getAllProducts, getBrands, getFilters } from "@/services/catalog";
+import { getAllProducts, getBrands } from "@/services/catalog";
 
 const products = getAllProducts();
-const brands = getBrands();
-const filters = getFilters();
+const brands = ["Todas", ...getBrands()];
+const discountedIds = new Set(
+  [...products]
+    .sort((a, b) => a.price - b.price)
+    .slice(0, 3)
+    .map((product) => product.id),
+);
 
-const genderLabels: Record<string, string> = {
-  feminine: "Femenino",
-  masculine: "Masculino",
-  unisex: "Unisex",
+type CatalogViewProps = {
+  showHeading?: boolean;
+  showSearch?: boolean;
 };
 
-const concentrationLabels: Record<string, string> = {
-  EDT: "EDT",
-  EDP: "EDP",
-  Parfum: "Parfum",
-  Extrait: "Extrait",
-  EDC: "EDC",
-};
-
-const priceRanges = [
-  { label: "Todo", value: "all" },
-  { label: "Menos de $2,000", value: "under-2000" },
-  { label: "$2,000 - $2,600", value: "2000-2600" },
-  { label: "$2,600 - $3,200", value: "2600-3200" },
-  { label: "Mas de $3,200", value: "3200-plus" },
+const categories = [
+  { id: "para-el", label: "Para él", filter: { type: "gender", value: "masculine" } },
+  { id: "para-ella", label: "Para ella", filter: { type: "gender", value: "feminine" } },
+  { id: "unisex", label: "Unisex", filter: { type: "gender", value: "unisex" } },
+  { id: "mas-vendidos", label: "Más vendidos" },
+  { id: "entrega-inmediata", label: "Entrega inmediata" },
 ];
 
-const sortOptions = [
-  { label: "Popularidad", value: "popular" },
-  { label: "Precio: menor a mayor", value: "price-asc" },
-  { label: "Precio: mayor a menor", value: "price-desc" },
-];
-
-export function CatalogView() {
+export function CatalogView({
+  showHeading = true,
+  showSearch = true,
+}: CatalogViewProps) {
   const [query, setQuery] = useState("");
-  const [brand, setBrand] = useState("all");
-  const [gender, setGender] = useState("all");
-  const [concentration, setConcentration] = useState("all");
-  const [priceRange, setPriceRange] = useState("all");
-  const [sort, setSort] = useState("popular");
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeBrand, setActiveBrand] = useState<string>("Todas");
+  const [gridColumns, setGridColumns] = useState<2 | 3 | 4>(3);
+  const searchRef = useRef<HTMLInputElement | null>(null);
+  const searchParams = useSearchParams();
+  const showOffersOnly = searchParams?.get("offer") === "1";
 
-  const filtered = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
+  const filteredProducts = useMemo(() => {
+    let filtered = products;
 
-    const matchesPrice = (price: number) => {
-      if (priceRange === "under-2000") return price < 2000;
-      if (priceRange === "2000-2600") return price >= 2000 && price <= 2600;
-      if (priceRange === "2600-3200") return price > 2600 && price <= 3200;
-      if (priceRange === "3200-plus") return price > 3200;
-      return true;
-    };
-
-    const base = products.filter((product) => {
-      const matchesQuery =
-        normalizedQuery.length === 0 ||
-        product.name.toLowerCase().includes(normalizedQuery) ||
-        product.brand.toLowerCase().includes(normalizedQuery);
-
-      const matchesBrand = brand === "all" || product.brand === brand;
-      const matchesGender = gender === "all" || product.gender === gender;
-      const matchesConcentration =
-        concentration === "all" || product.concentration === concentration;
-
-      return (
-        matchesQuery &&
-        matchesBrand &&
-        matchesGender &&
-        matchesConcentration &&
-        matchesPrice(product.price)
-      );
-    });
-
-    if (sort === "price-asc") {
-      return [...base].sort((a, b) => a.price - b.price);
-    }
-    if (sort === "price-desc") {
-      return [...base].sort((a, b) => b.price - a.price);
+    if (showSearch) {
+      const normalizedQuery = query.trim().toLowerCase();
+      if (normalizedQuery) {
+        filtered = filtered.filter(
+          (product) =>
+            product.name.toLowerCase().includes(normalizedQuery) ||
+            product.brand.toLowerCase().includes(normalizedQuery),
+        );
+      }
     }
 
-    return base;
-  }, [query, brand, gender, concentration, priceRange, sort]);
+    if (activeBrand !== "Todas") {
+      filtered = filtered.filter((product) => product.brand === activeBrand);
+    }
+
+    if (showOffersOnly) {
+      filtered = filtered.filter((product) => discountedIds.has(product.id));
+    }
+
+    if (activeCategory) {
+      const category = categories.find((item) => item.id === activeCategory);
+      if (category?.filter?.type === "gender") {
+        filtered = filtered.filter(
+          (product) => product.gender === category.filter?.value,
+        );
+      }
+      if (category?.filter?.type === "tag") {
+        filtered = filtered.filter((product) =>
+          product.tags.includes(category.filter?.value ?? ""),
+        );
+      }
+    }
+
+    return filtered;
+  }, [activeBrand, activeCategory, query, showOffersOnly, showSearch]);
+
+  useEffect(() => {
+    if (!showSearch) {
+      return;
+    }
+
+    if (searchParams?.get("focus") === "1") {
+      searchRef.current?.focus();
+    }
+    const incomingBrand = searchParams?.get("brand");
+    if (incomingBrand && brands.includes(incomingBrand)) {
+      setActiveBrand(incomingBrand);
+    }
+  }, [searchParams, showSearch]);
 
   return (
     <div className="px-6 pb-20 pt-12">
       <section className="mx-auto flex w-full max-w-6xl flex-col gap-10">
-        <div className="flex flex-col gap-4">
-          <h1 className="text-3xl font-semibold text-neutral-900 sm:text-4xl">
-            Catalogo
-          </h1>
-          <p className="max-w-2xl text-base text-neutral-600">
-            Explora aromas seleccionados con filtros inteligentes para encontrar tu
-            proximo favorito.
-          </p>
-        </div>
-
-        <div className="grid gap-6 rounded-3xl border border-line bg-white/80 p-6 shadow-sm lg:grid-cols-[minmax(0,1fr)_260px]">
+        {showHeading ? (
           <div className="flex flex-col gap-4">
-            <label className="text-sm font-semibold text-neutral-700" htmlFor="search">
-              Buscar
-            </label>
-            <input
-              id="search"
-              type="search"
-              placeholder="Marca o nombre"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              className="w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900 outline-none transition focus:border-neutral-400"
-            />
+            <section className="relative overflow-hidden rounded-3xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.08)]">
+              <img
+                src="/images/headers/catalogo.png"
+                alt="Fragancias Box Parfum"
+                className="absolute inset-0 h-full w-full object-cover -scale-x-100"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/30 to-transparent" />
+              <div className="relative flex flex-col items-start gap-3 px-6 py-10 text-left sm:px-10 sm:py-12 md:px-12">
+                <h1 className="text-4xl font-semibold text-white drop-shadow-[0_6px_16px_rgba(0,0,0,0.65)] sm:text-5xl">
+                  Fragancias
+                </h1>
+                <div className="flex items-center gap-2 opacity-80">
+                  {[2, 3, 4].map((count) => (
+                    <button
+                      key={count}
+                      type="button"
+                      onClick={() => setGridColumns(count as 2 | 3 | 4)}
+                      className={`inline-flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-semibold transition ${
+                        gridColumns === count
+                          ? "bg-white/90 text-neutral-900"
+                          : "bg-white/15 text-white hover:bg-white/25"
+                      }`}
+                      aria-label={`Mostrar ${count} columnas`}
+                    >
+                      {count}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {showSearch ? (
+                <div className="relative z-10 mt-6 flex flex-col gap-4 px-6 pb-8 sm:px-10 md:px-12">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-start">
+                    <div className="flex w-full flex-col gap-2 sm:max-w-xs">
+                      <div className="flex items-center gap-2 rounded-full bg-white/25 px-5 py-2.5 text-sm font-medium text-white shadow-[0_6px_18px_rgba(0,0,0,0.08)] transition focus-within:bg-white/35">
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                          className="text-white/80"
+                        >
+                          <circle cx="11" cy="11" r="8" />
+                          <path d="m21 21-4.3-4.3" />
+                        </svg>
+                        <input
+                          id="catalog-search"
+                          type="search"
+                          placeholder="Marca o nombre"
+                          value={query}
+                          onChange={(event) => setQuery(event.target.value)}
+                          ref={searchRef}
+                          className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/70"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                <div className="flex items-center gap-3 overflow-x-auto pb-2">
+                  {categories.map((category) => {
+                    const isActive = activeCategory === category.id;
+                    return (
+                        <button
+                          key={category.id}
+                          type="button"
+                          onClick={() =>
+                            setActiveCategory(isActive ? null : category.id)
+                          }
+                          className={`ui-press inline-flex items-center whitespace-nowrap rounded-full border border-transparent px-5 py-2.5 text-sm font-medium shadow-[0_6px_18px_rgba(0,0,0,0.08)] transition ${
+                            isActive
+                              ? "bg-white text-neutral-900"
+                              : "bg-white/25 text-white hover:bg-white/40"
+                          }`}
+                        >
+                          {category.label}
+                        </button>
+                    );
+                  })}
+                </div>
+                <div className="flex items-center gap-3 overflow-x-auto pb-2">
+                  {brands.map((brand) => {
+                    const isActive = activeBrand === brand;
+                    return (
+                      <button
+                        key={brand}
+                        type="button"
+                        onClick={() => setActiveBrand(brand)}
+                        className={`ui-press inline-flex items-center whitespace-nowrap rounded-full border border-transparent px-5 py-2.5 text-sm font-medium shadow-[0_6px_18px_rgba(0,0,0,0.08)] transition ${
+                          isActive
+                            ? "bg-white text-neutral-900"
+                            : "bg-white/25 text-white hover:bg-white/40"
+                        }`}
+                      >
+                        {brand}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null}
+            </section>
           </div>
+        ) : null}
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1">
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-neutral-700" htmlFor="brand">
-                Marca
-              </label>
-              <select
-                id="brand"
-                value={brand}
-                onChange={(event) => setBrand(event.target.value)}
-                className="rounded-2xl border border-neutral-200 bg-white px-3 py-3 text-sm text-neutral-800"
-              >
-                <option value="all">Todas</option>
-                {brands.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-neutral-700" htmlFor="gender">
-                Genero
-              </label>
-              <select
-                id="gender"
-                value={gender}
-                onChange={(event) => setGender(event.target.value)}
-                className="rounded-2xl border border-neutral-200 bg-white px-3 py-3 text-sm text-neutral-800"
-              >
-                <option value="all">Todos</option>
-                {filters.genders.map((item) => (
-                  <option key={item} value={item}>
-                    {genderLabels[item]}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label
-                className="text-sm font-semibold text-neutral-700"
-                htmlFor="concentration"
-              >
-                Concentracion
-              </label>
-              <select
-                id="concentration"
-                value={concentration}
-                onChange={(event) => setConcentration(event.target.value)}
-                className="rounded-2xl border border-neutral-200 bg-white px-3 py-3 text-sm text-neutral-800"
-              >
-                <option value="all">Todas</option>
-                {filters.concentrations.map((item) => (
-                  <option key={item} value={item}>
-                    {concentrationLabels[item]}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label
-                className="text-sm font-semibold text-neutral-700"
-                htmlFor="priceRange"
-              >
-                Precio
-              </label>
-              <select
-                id="priceRange"
-                value={priceRange}
-                onChange={(event) => setPriceRange(event.target.value)}
-                className="rounded-2xl border border-neutral-200 bg-white px-3 py-3 text-sm text-neutral-800"
-              >
-                {priceRanges.map((range) => (
-                  <option key={range.value} value={range.value}>
-                    {range.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-neutral-700" htmlFor="sort">
-                Ordenar
-              </label>
-              <select
-                id="sort"
-                value={sort}
-                onChange={(event) => setSort(event.target.value)}
-                className="rounded-2xl border border-neutral-200 bg-white px-3 py-3 text-sm text-neutral-800"
-              >
-                {sortOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
+        {showSearch ? null : null}
 
         <div>
-          {filtered.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-line bg-white px-8 py-16 text-center text-sm text-neutral-500">
-              No encontramos resultados. Ajusta los filtros o intenta otra busqueda.
+          {filteredProducts.length === 0 ? (
+            <div className="bg-white px-8 py-16 text-center text-sm text-neutral-500">
+              No encontramos resultados. Vuelve a cargar la página más tarde.
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((product) => (
-                <ProductCard key={product.id} product={product} />
+            <div
+              className={`grid gap-6 ${
+                gridColumns === 2
+                  ? "grid-cols-2 lg:grid-cols-2"
+                  : gridColumns === 3
+                    ? "grid-cols-2 lg:grid-cols-3"
+                    : "grid-cols-2 lg:grid-cols-4"
+              }`}
+            >
+              {filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  showDiscount={discountedIds.has(product.id)}
+                />
               ))}
             </div>
           )}

@@ -26,12 +26,22 @@ export function getAllProducts(): Product[] {
   return getSourceProducts();
 }
 
+function normalizeSlug(value: string) {
+  return decodeURIComponent(value).split(/[?#]/)[0]?.toLowerCase().trim();
+}
+
 export function getProductBySlug(slug: string): Product | null {
+  const normalizedSlug = normalizeSlug(slug);
   if (catalogSource === "shopify") {
-    return fetchProductByHandle(slug);
+    return fetchProductByHandle(normalizedSlug);
   }
 
-  return perfumes.find((product) => product.slug === slug) ?? null;
+  return (
+    perfumes.find((product) => {
+      const productSlug = normalizeSlug(product.slug);
+      return productSlug === normalizedSlug || product.id.toLowerCase() === normalizedSlug;
+    }) ?? null
+  );
 }
 
 export function getBrands(): string[] {

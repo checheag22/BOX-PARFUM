@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { CartDrawer } from "@/components/cart-drawer";
+import { CartProvider } from "@/components/cart-context";
+import { FloatingControls } from "@/components/floating-controls";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { WhatsAppFloatingButton } from "@/components/whatsapp-floating-button";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -30,12 +32,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-cream text-neutral-900 antialiased`}
       >
-        <div className="flex min-h-screen flex-col">
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
-        </div>
-        <WhatsAppFloatingButton />
+        <CartProvider>
+          <div className="flex min-h-screen flex-col">
+            <SiteHeader />
+            <main className="flex-1">{children}</main>
+            <SiteFooter />
+          </div>
+          <FloatingControls />
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );

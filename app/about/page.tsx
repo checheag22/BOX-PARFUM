@@ -11,7 +11,7 @@ export default function AboutPage() {
           exclusivos para que encuentres un aroma que te represente.
         </p>
         <p className="text-base text-neutral-600">
-          Trabajamos con catalogos limitados para garantizar curaduria, atencion
+          Trabajamos con catálogos limitados para garantizar curaduría, atención
           personalizada y una experiencia de compra premium.
         </p>
       </section>

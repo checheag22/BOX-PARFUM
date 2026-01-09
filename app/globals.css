@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --cream: #fbf8f3;
-  --ink: #151515;
-  --line: #e6dfd3;
-  --accent: #c08f64;
+  --cream: #f7f7f6;
+  --ink: #1b1813;
+  --line: #e5e1db;
+  --accent: #1b1813;
 }
 
 @theme inline {
@@ -17,13 +17,15 @@
 }
 
 body {
-  background: var(--cream);
+  background-color: var(--cream);
+  background-image: none;
   color: var(--ink);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system;
+  font-weight: 500;
 }
 
 h1,
 h2,
 h3 {
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }

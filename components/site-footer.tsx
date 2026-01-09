@@ -1,33 +1,61 @@
-const footerLinks = [
-  { label: "Sobre nosotros", href: "/about" },
+const exploreLinks = [
+  { label: "Inicio", href: "/" },
+  { label: "Fragancias", href: "/catalog" },
+  { label: "Nosotros", href: "/about" },
   { label: "Preguntas frecuentes", href: "/faq" },
-  { label: "Envios", href: "/shipping" },
-  { label: "Devoluciones", href: "/returns" },
-  { label: "Privacidad", href: "/privacy" },
-  { label: "Terminos", href: "/terms" },
+  { label: "Contacto directo", href: "/contact" },
 ];
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-neutral-200/70 bg-white">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-8 text-sm text-neutral-600 lg:flex-row lg:items-start lg:justify-between">
-        <div className="flex flex-col gap-2">
-          <span className="text-xs uppercase tracking-[0.3em] text-neutral-400">
-            Box Parfum
-          </span>
-          <span>Curated scents for every mood.</span>
-          <span>Hecho en Mexico. Envios nacionales.</span>
+    <footer className="border-t border-neutral-200/70 bg-[#f5efe7]">
+      <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 py-12 text-sm text-neutral-700 lg:grid-cols-[1.2fr_1fr_1fr]">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-black">
+              <img src="/images/logo.png" alt="Box Parfum" className="h-8 w-8" />
+            </div>
+            <span className="text-xs font-semibold uppercase tracking-[0.4em] text-neutral-900">
+              Box Parfum
+            </span>
+          </div>
+          <p className="max-w-sm text-base text-neutral-600">
+            Perfumes árabes inspirados seleccionados con criterio y enfoque en
+            calidad.
+          </p>
+          <a
+            href="https://wa.me/524778960011"
+            target="_blank"
+            rel="noreferrer"
+            className="w-fit rounded-full bg-neutral-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:bg-neutral-800"
+          >
+            WhatsApp directo
+          </a>
         </div>
-        <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-3">
-          {footerLinks.map((link) => (
+
+        <div className="flex flex-col gap-3 text-base text-neutral-600">
+          <span className="text-xs font-semibold uppercase tracking-[0.35em] text-neutral-900">
+            Explorar
+          </span>
+          {exploreLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-neutral-600 transition hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900/40"
+              className="transition hover:text-neutral-900"
             >
               {link.label}
             </a>
           ))}
+        </div>
+
+        <div className="flex flex-col gap-3 text-base text-neutral-600">
+          <span className="text-xs font-semibold uppercase tracking-[0.35em] text-neutral-900">
+            Atención
+          </span>
+          <span>Asesoría personalizada por WhatsApp</span>
+          <span>WhatsApp: +52 477 896 0011</span>
+          <span>Instagram: @boxparfum</span>
+          <span>Email: boxparfum@outlook.com</span>
         </div>
       </div>
     </footer>

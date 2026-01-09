@@ -5,9 +5,9 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const phone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? "524779127884";
 const defaultMessage =
-  process.env.NEXT_PUBLIC_WHATSAPP_DEFAULT_MESSAGE ?? "Hola, me interesa su catalogo.";
+  process.env.NEXT_PUBLIC_WHATSAPP_DEFAULT_MESSAGE ?? "Hola, me interesa su catálogo.";
 
-const contactEmail = "hola@boxparfum.com";
+const contactEmail = "boxparfum@outlook.com";
 const instagramHandle = "@boxparfum";
 
 type FormState = {
@@ -48,7 +48,7 @@ export default function ContactPage() {
     if (!form.email.trim()) {
       nextErrors.email = "Email requerido.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      nextErrors.email = "Email invalido.";
+      nextErrors.email = "Email inválido.";
     }
 
     if (!form.message.trim()) {
@@ -72,24 +72,36 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="px-6 pb-20 pt-12">
-      <section className="mx-auto flex w-full max-w-6xl flex-col gap-10">
+    <div className="relative px-6 pb-20 pt-12">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-10 right-4 h-48 w-48 rounded-full bg-amber-300/30 blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-52 -left-8 h-56 w-56 rounded-full bg-rose-300/30 blur-3xl"
+      />
+
+      <section className="mx-auto flex w-full max-w-6xl flex-col gap-12">
         <div className="flex flex-col gap-4">
-          <h1 className="text-3xl font-semibold text-neutral-900 sm:text-4xl">
-            Contacto
+          <p className="text-xs uppercase tracking-[0.5em] text-neutral-500">
+            Contacto directo
+          </p>
+          <h1 className="text-4xl font-semibold text-neutral-900 sm:text-5xl">
+            Cuéntanos qué aroma buscas
           </h1>
-          <p className="max-w-2xl text-base text-neutral-600">
-            Compartenos lo que buscas y te guiamos con recomendaciones personalizadas.
+          <p className="max-w-2xl text-base text-neutral-600 sm:text-lg">
+            Compártenos lo que buscas y te guiamos con recomendaciones personalizadas.
           </p>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
           <form
             onSubmit={handleSubmit}
-            className="flex flex-col gap-5 rounded-3xl border border-line bg-white p-6 shadow-sm"
+            className="flex flex-col gap-6 rounded-3xl bg-white p-8 shadow-[0_18px_50px_rgba(26,22,18,0.12)]"
           >
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-neutral-700" htmlFor="name">
+              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500" htmlFor="name">
                 Nombre
               </label>
               <input
@@ -97,7 +109,7 @@ export default function ContactPage() {
                 type="text"
                 value={form.name}
                 onChange={(event) => handleChange("name", event.target.value)}
-                className="w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900 outline-none transition focus:border-neutral-400"
+                className="w-full rounded-2xl bg-[#f7f4ef] px-4 py-3 text-sm text-neutral-900 outline-none transition focus:bg-white focus:shadow-[0_0_0_2px_rgba(23,22,20,0.2)]"
               />
               {errors.name ? (
                 <span className="text-xs text-rose-600">{errors.name}</span>
@@ -105,7 +117,7 @@ export default function ContactPage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-neutral-700" htmlFor="email">
+              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500" htmlFor="email">
                 Email
               </label>
               <input
@@ -113,7 +125,7 @@ export default function ContactPage() {
                 type="email"
                 value={form.email}
                 onChange={(event) => handleChange("email", event.target.value)}
-                className="w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900 outline-none transition focus:border-neutral-400"
+                className="w-full rounded-2xl bg-[#f7f4ef] px-4 py-3 text-sm text-neutral-900 outline-none transition focus:bg-white focus:shadow-[0_0_0_2px_rgba(23,22,20,0.2)]"
               />
               {errors.email ? (
                 <span className="text-xs text-rose-600">{errors.email}</span>
@@ -121,7 +133,7 @@ export default function ContactPage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-neutral-700" htmlFor="message">
+              <label className="text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500" htmlFor="message">
                 Mensaje
               </label>
               <textarea
@@ -129,7 +141,7 @@ export default function ContactPage() {
                 rows={5}
                 value={form.message}
                 onChange={(event) => handleChange("message", event.target.value)}
-                className="w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-900 outline-none transition focus:border-neutral-400"
+                className="w-full rounded-2xl bg-[#f7f4ef] px-4 py-3 text-sm text-neutral-900 outline-none transition focus:bg-white focus:shadow-[0_0_0_2px_rgba(23,22,20,0.2)]"
               />
               {errors.message ? (
                 <span className="text-xs text-rose-600">{errors.message}</span>
@@ -138,60 +150,65 @@ export default function ContactPage() {
 
             <button
               type="submit"
-              className="inline-flex items-center justify-center rounded-full bg-neutral-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800"
+              className="inline-flex items-center justify-center rounded-full bg-neutral-900 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-neutral-800"
             >
-              Enviar
+              Enviar mensaje →
             </button>
 
             {status === "success" ? (
               <div
                 role="status"
-                className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
+                className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
               >
                 Mensaje enviado. Te respondemos pronto.
               </div>
             ) : null}
           </form>
 
-          <aside className="flex flex-col gap-5 rounded-3xl border border-line bg-white/80 p-6">
-            <h2 className="text-lg font-semibold text-neutral-900">
-              Datos de contacto
-            </h2>
-            <div className="text-sm text-neutral-600">
-              <p className="text-xs uppercase tracking-[0.3em] text-neutral-400">
-                WhatsApp
+          <aside className="flex flex-col gap-6 rounded-3xl bg-white p-8 text-neutral-900 shadow-[0_18px_50px_rgba(26,22,18,0.12)]">
+            <div>
+              <p className="text-xs uppercase tracking-[0.35em] text-neutral-500">
+                Datos de contacto
               </p>
-              {whatsappUrl ? (
+              <h2 className="mt-3 text-2xl font-semibold">Hablemos</h2>
+            </div>
+            <div className="flex flex-col gap-6 text-sm text-neutral-600">
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-neutral-500">
+                  WhatsApp
+                </p>
+                {whatsappUrl ? (
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-3 inline-flex w-fit items-center gap-2 rounded-full bg-neutral-900 px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:-translate-y-0.5 hover:bg-neutral-800"
+                  >
+                    Chatear ahora
+                  </a>
+                ) : (
+                  <p className="mt-3">Configura el número en el .env.</p>
+                )}
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-neutral-500">
+                  Instagram
+                </p>
+                <p className="mt-2 text-base font-semibold text-neutral-900">
+                  {instagramHandle}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-neutral-500">
+                  Email
+                </p>
                 <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-2 inline-flex text-sm font-semibold text-accent"
+                  href={`mailto:${contactEmail}`}
+                  className="mt-2 inline-flex text-base font-semibold text-neutral-900"
                 >
-                  Chatear por WhatsApp
+                  {contactEmail}
                 </a>
-              ) : (
-                <p className="mt-2">Configura el numero en el .env.</p>
-              )}
-            </div>
-            <div className="text-sm text-neutral-600">
-              <p className="text-xs uppercase tracking-[0.3em] text-neutral-400">
-                Instagram
-              </p>
-              <p className="mt-2 text-sm font-semibold text-neutral-800">
-                {instagramHandle}
-              </p>
-            </div>
-            <div className="text-sm text-neutral-600">
-              <p className="text-xs uppercase tracking-[0.3em] text-neutral-400">
-                Email
-              </p>
-              <a
-                href={`mailto:${contactEmail}`}
-                className="mt-2 inline-flex text-sm font-semibold text-neutral-800"
-              >
-                {contactEmail}
-              </a>
+              </div>
             </div>
           </aside>
         </div>

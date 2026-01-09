@@ -21,6 +21,8 @@ export type Product = {
   name: string;
   price: number;
   currency: CurrencyCode;
+  image: string;
+  hoverImage?: string;
   images: string[];
   notes: ProductNotes;
   concentration: Concentration;

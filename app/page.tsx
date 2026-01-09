@@ -1,74 +1,46 @@
-import Link from "next/link";
-
-const collections = [
-  {
-    title: "Signature",
-    description: "Aromas iconicos para el dia a dia.",
-  },
-  {
-    title: "Noche",
-    description: "Notas intensas y sensuales para ocasiones especiales.",
-  },
-  {
-    title: "Frescos",
-    description: "Citrico, limpio, perfecto para dias calidos.",
-  },
-];
+import { FlyerCarousel } from "@/components/flyer-carousel";
+import { CollectionCarousel } from "@/components/collection-carousel";
+import { CatalogView } from "@/app/catalog/catalog-view";
 
 export default function Home() {
   return (
-    <div className="px-6 pb-16 pt-12">
+    <div className="px-6 pb-16 pt-2">
+      <FlyerCarousel />
+
       <section className="mx-auto flex w-full max-w-6xl flex-col gap-12">
-        <div className="rounded-[32px] border border-line bg-white/70 px-8 py-12 shadow-sm sm:px-12 sm:py-16">
-          <div className="flex flex-col gap-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-neutral-500">
-              Curated fragrances
-            </p>
-            <h1 className="text-3xl font-semibold leading-tight text-neutral-900 sm:text-5xl">
-              Encuentra tu firma olfativa con una seleccion boutique de perfumes.
-            </h1>
-            <p className="max-w-2xl text-base leading-relaxed text-neutral-600 sm:text-lg">
-              Box Parfum combina marcas de autor, esencias atemporales y lanzamientos
-              exclusivos para cada estacion.
-            </p>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Link
-                href="/catalog"
-                className="inline-flex items-center justify-center rounded-full bg-neutral-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800"
-              >
-                Explorar catalogo
-              </Link>
-              <Link
-                href="/catalog"
-                className="inline-flex items-center justify-center rounded-full border border-neutral-300 px-6 py-3 text-sm font-semibold text-neutral-700 transition hover:border-neutral-500"
-              >
-                Ver colecciones
-              </Link>
+        <CollectionCarousel />
+        <section className="border border-black/5 bg-white p-6 shadow-sm sm:p-8">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.35em] text-neutral-500">
+                Marcas destacadas
+              </p>
             </div>
           </div>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-3">
-          {collections.map((collection) => (
-            <div
-              key={collection.title}
-              className="rounded-2xl border border-line bg-white px-6 py-8 shadow-sm"
-            >
-              <h2 className="text-lg font-semibold text-neutral-900">
-                {collection.title}
-              </h2>
-              <p className="mt-3 text-sm leading-relaxed text-neutral-600">
-                {collection.description}
-              </p>
-              <Link
-                href="/catalog"
-                className="mt-6 inline-flex text-sm font-semibold text-accent"
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {[
+              { name: "Afnan", image: "/images/brands/afnan.webp" },
+              { name: "Lattafa", image: "/images/brands/lattafa.png" },
+              { name: "Armaf", image: "/images/brands/armaf.png" },
+              { name: "Al Haramain", image: "/images/brands/al-haramain.webp" },
+              { name: "Bharara", image: "/images/brands/bharara.webp" },
+            ].map((brand) => (
+              <a
+                key={brand.name}
+                href={`/catalog?brand=${encodeURIComponent(brand.name)}`}
+                className="ui-press flex items-center justify-center gap-3 border border-black/0 bg-[#fbf7f1] px-4 py-5 text-sm font-semibold text-neutral-700 transition hover:-translate-y-0.5 hover:border-black/0 hover:bg-black/5"
               >
-                Descubrir
-              </Link>
-            </div>
-          ))}
-        </div>
+                <img
+                  src={brand.image}
+                  alt={brand.name}
+                  className="h-8 w-auto object-contain"
+                />
+                <span>{brand.name}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+        <CatalogView showHeading={false} showSearch={false} />
       </section>
     </div>
   );

@@ -15,7 +15,7 @@ export function ProductGallery({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl border border-line bg-white">
+      <div className="relative aspect-[4/5] w-full overflow-hidden bg-white">
         {activeImage ? (
           <Image
             src={activeImage}
@@ -37,10 +37,10 @@ export function ProductGallery({
             key={image}
             type="button"
             onClick={() => setActiveIndex(index)}
-            className={`relative h-20 w-16 overflow-hidden rounded-2xl border transition ${
+            className={`relative h-20 w-16 overflow-hidden transition ${
               index === activeIndex
-                ? "border-neutral-900"
-                : "border-neutral-200 hover:border-neutral-400"
+                ? "ring-1 ring-neutral-900"
+                : "ring-1 ring-neutral-200 hover:ring-neutral-400"
             }`}
             aria-label={`Ver imagen ${index + 1}`}
           >

@@ -2,7 +2,7 @@ const faqs = [
   {
     question: "Como elegir mi perfume ideal?",
     answer:
-      "Puedes filtrar por temporada, notas y concentracion. Si necesitas ayuda, escribenos y te guiaremos.",
+      "Puedes filtrar por temporada, notas y concentración. Si necesitas ayuda, escríbenos y te guiaremos.",
   },
   {
     question: "Los perfumes son originales?",
@@ -12,7 +12,7 @@ const faqs = [
   {
     question: "Puedo pedir recomendaciones personalizadas?",
     answer:
-      "Claro. En la pagina de contacto puedes contarnos tus preferencias.",
+      "Claro. En la página de contacto puedes contarnos tus preferencias.",
   },
 ];
 
@@ -30,7 +30,7 @@ export default function FaqPage() {
         </div>
         <div className="grid gap-4">
           {faqs.map((faq) => (
-            <div key={faq.question} className="rounded-2xl border border-line bg-white p-6">
+            <div key={faq.question} className="bg-white p-6">
               <h2 className="text-lg font-semibold text-neutral-900">
                 {faq.question}
               </h2>
