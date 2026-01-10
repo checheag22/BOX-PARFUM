@@ -16,11 +16,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-html,
-body {
-  overscroll-behavior-y: none;
-}
-
 body {
   background-color: var(--cream);
   background-image: none;

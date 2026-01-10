@@ -184,7 +184,7 @@ export function CollectionCarousel() {
               className="w-full flex-shrink-0 px-3 md:w-1/3"
             >
               <a
-                href={`/catalog?q=${encodeURIComponent(collection.query)}`}
+                href={`/catalog?query=${encodeURIComponent(collection.query)}&focus=1`}
                 className="block bg-white px-6 py-8 shadow-[0_14px_36px_rgba(29,26,22,0.08)]"
               >
                 <div className="relative mb-6 aspect-[4/5] w-full bg-white">
