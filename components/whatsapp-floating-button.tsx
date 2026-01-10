@@ -1,18 +1,29 @@
+ "use client";
+
+import { useEffect, useState } from "react";
 import { buildWhatsAppUrlFromPhones, resolveWhatsAppPhones } from "@/lib/whatsapp";
 
-const phones = resolveWhatsAppPhones({
-  phones: process.env.NEXT_PUBLIC_WHATSAPP_PHONES,
-  phone: process.env.NEXT_PUBLIC_WHATSAPP_PHONE,
-});
-const defaultMessage =
-  process.env.NEXT_PUBLIC_WHATSAPP_DEFAULT_MESSAGE ?? "Hola, me interesa un perfume.";
-
 export function WhatsAppFloatingButton() {
-  if (phones.length === 0) {
+  const [href, setHref] = useState<string | null>(null);
+
+  useEffect(() => {
+    const phones = resolveWhatsAppPhones({
+      phones: process.env.NEXT_PUBLIC_WHATSAPP_PHONES,
+      phone: process.env.NEXT_PUBLIC_WHATSAPP_PHONE,
+    });
+    const defaultMessage =
+      process.env.NEXT_PUBLIC_WHATSAPP_DEFAULT_MESSAGE ??
+      "Hola, me interesa un perfume.";
+    if (phones.length === 0) {
+      setHref(null);
+      return;
+    }
+    setHref(buildWhatsAppUrlFromPhones(phones, defaultMessage));
+  }, []);
+
+  if (!href) {
     return null;
   }
-
-  const href = buildWhatsAppUrlFromPhones(phones, defaultMessage);
 
   return (
     <a
