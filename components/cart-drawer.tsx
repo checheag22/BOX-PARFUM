@@ -4,6 +4,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/components/cart-context";
 import { formatPrice } from "@/lib/helpers";
+import {
+  buildWhatsAppUrlFromPhones,
+  resolveWhatsAppPhones,
+} from "@/lib/whatsapp";
+
+const phones = resolveWhatsAppPhones({
+  phones: process.env.NEXT_PUBLIC_WHATSAPP_PHONES,
+  phone: process.env.NEXT_PUBLIC_WHATSAPP_PHONE,
+});
 
 export function CartDrawer() {
   const {
@@ -21,6 +30,25 @@ export function CartDrawer() {
   }
 
   const currency = items[0]?.currency ?? "MXN";
+  const whatsappMessage =
+    items.length === 0
+      ? "Hola, estoy interesado en comprar."
+      : [
+          "Hola, estoy interesado en comprar:",
+          "",
+          ...items.map(
+            (item) =>
+              `• ${item.quantity} x ${item.brand} ${item.name} — ${formatPrice(
+                item.price * item.quantity,
+                item.currency,
+              )}`,
+          ),
+          "",
+          `Subtotal: ${formatPrice(subtotal, currency)}`,
+          "",
+          "¿Me apoyas con la compra?",
+        ].join("\n");
+  const whatsappUrl = buildWhatsAppUrlFromPhones(phones, whatsappMessage);
 
   return (
     <div className="fixed inset-0 z-50">
@@ -126,12 +154,15 @@ export function CartDrawer() {
               </span>
             </div>
             <div className="mt-4 flex flex-col gap-2">
-              <button
-                type="button"
-                className="w-full bg-neutral-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800"
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+                onClick={closeCart}
+                className="w-full bg-neutral-900 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-neutral-800"
               >
                 Continuar compra
-              </button>
+              </a>
               <button
                 type="button"
                 onClick={clearCart}

@@ -1,15 +1,18 @@
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildWhatsAppUrlFromPhones, resolveWhatsAppPhones } from "@/lib/whatsapp";
 
-const phone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? "524779127884";
+const phones = resolveWhatsAppPhones({
+  phones: process.env.NEXT_PUBLIC_WHATSAPP_PHONES,
+  phone: process.env.NEXT_PUBLIC_WHATSAPP_PHONE,
+});
 const defaultMessage =
   process.env.NEXT_PUBLIC_WHATSAPP_DEFAULT_MESSAGE ?? "Hola, me interesa un perfume.";
 
 export function WhatsAppFloatingButton() {
-  if (!phone) {
+  if (phones.length === 0) {
     return null;
   }
 
-  const href = buildWhatsAppUrl(phone, defaultMessage);
+  const href = buildWhatsAppUrlFromPhones(phones, defaultMessage);
 
   return (
     <a

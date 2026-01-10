@@ -90,6 +90,11 @@ export function CatalogView({
     if (incomingBrand && brands.includes(incomingBrand)) {
       setActiveBrand(incomingBrand);
     }
+
+    const incomingQuery = searchParams?.get("q");
+    if (incomingQuery) {
+      setQuery(incomingQuery);
+    }
   }, [searchParams, showSearch]);
 
   return (
