@@ -70,7 +70,7 @@ export function ProductCard({ product, showDiscount = false }: ProductCardProps)
               {product.name}
             </h3>
           </div>
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
             <div className="flex flex-col">
               <span className="text-lg font-semibold text-neutral-900">
                 {formatPrice(product.price, product.currency)} MXN
@@ -82,7 +82,7 @@ export function ProductCard({ product, showDiscount = false }: ProductCardProps)
               ) : null}
             </div>
             <span
-              className={`px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] ${availability.className}`}
+              className={`w-fit px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] sm:text-[11px] sm:tracking-[0.25em] ${availability.className}`}
             >
               {availability.label}
             </span>

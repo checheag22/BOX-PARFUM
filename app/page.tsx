@@ -33,12 +33,12 @@ export default function Home() {
               <a
                 key={brand.name}
                 href={`/catalog?brand=${encodeURIComponent(brand.name)}`}
-                className="ui-press flex items-center justify-center gap-3 border border-black/0 bg-[#fbf7f1] px-4 py-5 text-sm font-semibold text-neutral-700 transition hover:-translate-y-0.5 hover:border-black/0 hover:bg-black/5"
+                className="ui-press flex items-center justify-center gap-3 border border-black/0 bg-[#fbf7f1] px-4 py-5 text-sm font-semibold text-neutral-700 transition hover:-translate-y-0.5 hover:border-black/0 hover:bg-black/5 max-md:flex-col max-md:gap-2 max-md:py-4"
               >
                 <img
                   src={brand.image}
                   alt={brand.name}
-                  className="h-8 w-auto object-contain"
+                  className="h-8 w-8 object-contain max-md:h-10 max-md:w-10"
                 />
                 <span>{brand.name}</span>
               </a>
