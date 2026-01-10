@@ -5,7 +5,10 @@ import Link from "next/link";
 import { ProductCard } from "@/components/product-card";
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { formatPrice } from "@/lib/helpers";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import {
+  buildWhatsAppUrlFromPhones,
+  resolveWhatsAppPhones,
+} from "@/lib/whatsapp";
 import { getAllProducts, getProductBySlug } from "@/services/catalog";
 import { ProductGallery } from "@/app/product/[slug]/product-gallery";
 
@@ -51,7 +54,10 @@ export default async function ProductPage({ params }: PageProps) {
   const origin = host ? `${protocol}://${host}` : "";
   const currentUrl = origin ? `${origin}/product/${product.slug}` : "";
 
-  const phone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? "524779127884";
+  const phones = resolveWhatsAppPhones({
+    phones: process.env.NEXT_PUBLIC_WHATSAPP_PHONES,
+    phone: process.env.NEXT_PUBLIC_WHATSAPP_PHONE,
+  });
   const defaultMessage =
     process.env.NEXT_PUBLIC_WHATSAPP_DEFAULT_MESSAGE ??
     "Hola, me interesa este perfume.";
@@ -59,7 +65,7 @@ export default async function ProductPage({ params }: PageProps) {
     product.price,
     product.currency,
   )}\nLink: ${currentUrl}`;
-  const waHref = phone ? buildWhatsAppUrl(phone, waMessage) : "";
+  const waHref = buildWhatsAppUrlFromPhones(phones, waMessage);
 
   const allProducts = getAllProducts();
   const discountedIds = new Set(

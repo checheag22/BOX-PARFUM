@@ -6,39 +6,39 @@ import { useEffect, useMemo, useState } from "react";
 type CollectionItem = {
   title: string;
   image: string;
-  brand: string;
+  query: string;
 };
 
 const COLLECTIONS: CollectionItem[] = [
   {
     title: "Supremacy Afnan",
     image: "/images/collections/supremacy-afnan.png",
-    brand: "Afnan",
+    query: "supremacy",
   },
   {
     title: "Odyssey Armaf",
     image: "/images/collections/odyssey-armaf.png",
-    brand: "Armaf",
+    query: "odyssey",
   },
   {
     title: "Fakhar Lattafa",
     image: "/images/collections/fakhar-lattafa.png",
-    brand: "Lattafa",
+    query: "fakhar",
   },
   {
     title: "Club de Nuit Armaf",
     image: "/images/collections/club-de-nuit-armaf.png",
-    brand: "Armaf",
+    query: "club de nuit",
   },
   {
     title: "Yara Lattafa",
     image: "/images/collections/yara-lattafa.png",
-    brand: "Lattafa",
+    query: "yara",
   },
   {
     title: "Assad Lattafa",
     image: "/images/collections/assad-lattafa.png",
-    brand: "Lattafa",
+    query: "asad",
   },
 ];
 
@@ -88,7 +88,7 @@ export function CollectionCarousel() {
               className="w-full flex-shrink-0 px-3 md:w-1/3"
             >
               <a
-                href={`/catalog?brand=${encodeURIComponent(collection.brand)}`}
+                href={`/catalog?q=${encodeURIComponent(collection.query)}`}
                 className="block bg-white px-6 py-8 shadow-[0_14px_36px_rgba(29,26,22,0.08)]"
               >
                 <div className="relative mb-6 aspect-[4/5] w-full bg-white">
