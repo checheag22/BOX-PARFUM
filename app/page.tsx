@@ -2,12 +2,26 @@
 
 export const dynamic = "force-dynamic";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { FlyerCarousel } from "@/components/flyer-carousel";
 import { CollectionCarousel } from "@/components/collection-carousel";
 import { CatalogView } from "@/app/catalog/catalog-view";
 
 export default function Home() {
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      if ("scrollRestoration" in window.history) {
+        window.history.scrollRestoration = "manual";
+      }
+      window.requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, behavior: "auto" });
+      });
+      window.setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "auto" });
+      }, 50);
+    }
+  }, []);
+
   return (
     <div className="px-6 pb-16 pt-2">
       <FlyerCarousel />
