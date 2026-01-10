@@ -9,7 +9,7 @@ export function CartFloatingButton() {
     <button
       type="button"
       onClick={openCart}
-      className="fixed right-6 top-6 z-50 inline-flex items-center gap-2 rounded-2xl bg-neutral-900 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-neutral-800 hover:shadow-xl"
+      className="fixed right-4 top-4 z-50 inline-flex items-center gap-2 rounded-2xl bg-neutral-900 px-3 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-neutral-800 hover:shadow-xl md:right-6 md:top-6 md:px-4 md:py-3"
       aria-label="Abrir carrito"
     >
       <span aria-hidden="true" className="text-base">
@@ -29,7 +29,7 @@ export function CartFloatingButton() {
           <path d="M1 1h4l2.6 12.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.5L23 6H6" />
         </svg>
       </span>
-      <span>Carrito</span>
+      <span className="max-md:hidden">Carrito</span>
       <span className="rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-neutral-900">
         {totalItems}
       </span>

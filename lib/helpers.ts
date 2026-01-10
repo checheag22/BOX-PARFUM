@@ -5,12 +5,13 @@ export function formatPrice(
   currency: CurrencyCode,
   locale = "es-MX",
 ) {
+  const roundedValue = Math.round(value / 10) * 10;
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(value);
+  }).format(roundedValue);
 }
 
 export function buildProductUrl(slug: string) {

@@ -16,6 +16,11 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html,
+body {
+  overscroll-behavior-y: none;
+}
+
 body {
   background-color: var(--cream);
   background-image: none;
@@ -39,6 +44,8 @@ h3 {
 img {
   max-width: 100%;
   height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 @media (max-width: 768px) {
@@ -50,8 +57,12 @@ img {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .catalog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .catalog-grid.mobile-one {
     grid-template-columns: minmax(0, 1fr);
   }
 }
