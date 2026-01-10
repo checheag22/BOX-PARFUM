@@ -238,7 +238,7 @@ export const perfumes = [
   {
     id: "pf-021",
     slug: "l-aventure",
-    brand: "Armaf",
+    brand: "Al Haramain",
     name: "L Aventure",
     price: 1040,
     currency: "MXN",

@@ -34,10 +34,16 @@ export function CatalogView({
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [activeBrand, setActiveBrand] = useState<string>("Todas");
-  const [gridColumns, setGridColumns] = useState<2 | 3 | 4>(3);
+  const [gridColumns, setGridColumns] = useState<1 | 2 | 3 | 4>(3);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const searchRef = useRef<HTMLInputElement | null>(null);
+  const catalogTopRef = useRef<HTMLDivElement | null>(null);
+  const categoryScrollRef = useRef<HTMLDivElement | null>(null);
+  const brandScrollRef = useRef<HTMLDivElement | null>(null);
   const searchParams = useSearchParams();
   const showOffersOnly = searchParams?.get("offer") === "1";
+  const mobilePageSize = 8;
 
   const filteredProducts = useMemo(() => {
     let filtered = products;
@@ -79,26 +85,75 @@ export function CatalogView({
   }, [activeBrand, activeCategory, query, showOffersOnly, showSearch]);
 
   useEffect(() => {
+    const updateViewport = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    updateViewport();
+    window.addEventListener("resize", updateViewport);
+    return () => window.removeEventListener("resize", updateViewport);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile) {
+      return;
+    }
+    const offset = 24;
+    if (categoryScrollRef.current) {
+      categoryScrollRef.current.scrollLeft = offset;
+    }
+    if (brandScrollRef.current) {
+      brandScrollRef.current.scrollLeft = offset;
+    }
+  }, [isMobile]);
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [activeBrand, activeCategory, query, showOffersOnly, showSearch]);
+
+  const pageCount = isMobile
+    ? Math.max(1, Math.ceil(filteredProducts.length / mobilePageSize))
+    : 1;
+  const visibleProducts = isMobile
+    ? filteredProducts.slice(
+        currentPage * mobilePageSize,
+        currentPage * mobilePageSize + mobilePageSize,
+      )
+    : filteredProducts;
+  const scrollToCatalogTop = () => {
+    catalogTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  useEffect(() => {
+    if (isMobile) {
+      scrollToCatalogTop();
+    }
+  }, [currentPage, isMobile]);
+
+  useEffect(() => {
     if (!showSearch) {
       return;
     }
 
     if (searchParams?.get("focus") === "1") {
-      searchRef.current?.focus();
+      const input = searchRef.current;
+      if (input) {
+        input.focus();
+        input.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+    const incomingQuery = searchParams?.get("query");
+    if (incomingQuery && incomingQuery !== query) {
+      setQuery(incomingQuery);
     }
     const incomingBrand = searchParams?.get("brand");
     if (incomingBrand && brands.includes(incomingBrand)) {
       setActiveBrand(incomingBrand);
     }
 
-    const incomingQuery = searchParams?.get("q");
-    if (incomingQuery) {
-      setQuery(incomingQuery);
-    }
   }, [searchParams, showSearch]);
 
   return (
-    <div className="px-6 pb-20 pt-12">
+    <div className="px-6 pb-20 pt-12" ref={catalogTopRef}>
       <section className="mx-auto flex w-full max-w-6xl flex-col gap-10">
         {showHeading ? (
           <div className="flex flex-col gap-4">
@@ -109,20 +164,25 @@ export function CatalogView({
                 className="absolute inset-0 h-full w-full object-cover -scale-x-100"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-br from-black/0 via-black/10 to-black/45 md:hidden" />
               <div className="relative flex flex-col items-start gap-3 px-6 py-10 text-left sm:px-10 sm:py-12 md:px-12">
                 <h1 className="text-4xl font-semibold text-white drop-shadow-[0_6px_16px_rgba(0,0,0,0.65)] sm:text-5xl">
                   Fragancias
                 </h1>
                 <div className="flex items-center gap-2 opacity-80">
-                  {[2, 3, 4].map((count) => (
+                  {[1, 2, 3, 4].map((count) => (
                     <button
                       key={count}
                       type="button"
-                      onClick={() => setGridColumns(count as 2 | 3 | 4)}
+                      onClick={() => setGridColumns(count as 1 | 2 | 3 | 4)}
                       className={`inline-flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-semibold transition ${
                         gridColumns === count
                           ? "bg-white/90 text-neutral-900"
                           : "bg-white/15 text-white hover:bg-white/25"
+                      } ${
+                        count <= 2
+                          ? "md:hidden"
+                          : "max-md:hidden"
                       }`}
                       aria-label={`Mostrar ${count} columnas`}
                     >
@@ -158,12 +218,15 @@ export function CatalogView({
                           value={query}
                           onChange={(event) => setQuery(event.target.value)}
                           ref={searchRef}
-                          className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/70"
+                          className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/70 max-md:text-base"
                         />
                       </div>
                     </div>
                   </div>
-                <div className="flex items-center gap-3 overflow-x-auto pb-2">
+                <div
+                  ref={categoryScrollRef}
+                  className="flex items-center gap-3 overflow-x-auto pb-2"
+                >
                   {categories.map((category) => {
                     const isActive = activeCategory === category.id;
                     return (
@@ -184,7 +247,10 @@ export function CatalogView({
                     );
                   })}
                 </div>
-                <div className="flex items-center gap-3 overflow-x-auto pb-2">
+                <div
+                  ref={brandScrollRef}
+                  className="flex items-center gap-3 overflow-x-auto pb-2"
+                >
                   {brands.map((brand) => {
                     const isActive = activeBrand === brand;
                     return (
@@ -218,15 +284,17 @@ export function CatalogView({
             </div>
           ) : (
             <div
-              className={`grid gap-6 ${
-                gridColumns === 2
-                  ? "grid-cols-2 lg:grid-cols-2"
-                  : gridColumns === 3
-                    ? "grid-cols-2 lg:grid-cols-3"
-                    : "grid-cols-2 lg:grid-cols-4"
+              className={`catalog-grid grid gap-6 max-md:gap-3 ${
+                gridColumns === 1
+                  ? "grid-cols-1 mobile-one"
+                  : gridColumns === 2
+                    ? "grid-cols-2"
+                    : gridColumns === 3
+                      ? "grid-cols-3"
+                      : "grid-cols-4"
               }`}
             >
-              {filteredProducts.map((product) => (
+              {visibleProducts.map((product) => (
                 <ProductCard
                   key={product.id}
                   product={product}
@@ -235,6 +303,31 @@ export function CatalogView({
               ))}
             </div>
           )}
+          {isMobile && filteredProducts.length > mobilePageSize ? (
+            <div className="mt-6 flex items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() =>
+                  setCurrentPage((page) => (page === 0 ? pageCount - 1 : page - 1))
+                }
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-sm font-semibold text-neutral-700 shadow-[0_6px_18px_rgba(0,0,0,0.08)] transition hover:bg-neutral-100"
+                aria-label="Página anterior"
+              >
+                ‹
+              </button>
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500">
+                {currentPage + 1} / {pageCount}
+              </span>
+              <button
+                type="button"
+                onClick={() => setCurrentPage((page) => (page + 1) % pageCount)}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-sm font-semibold text-neutral-700 shadow-[0_6px_18px_rgba(0,0,0,0.08)] transition hover:bg-neutral-100"
+                aria-label="Página siguiente"
+              >
+                ›
+              </button>
+            </div>
+          ) : null}
         </div>
       </section>
     </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type CollectionItem = {
   title: string;
@@ -43,13 +43,21 @@ const COLLECTIONS: CollectionItem[] = [
 ];
 
 export function CollectionCarousel() {
-  const [startIndex, setStartIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(3);
+  const [currentIndex, setCurrentIndex] = useState(itemsPerView);
+  const [isTransitionEnabled, setIsTransitionEnabled] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
+  const resumeTimerRef = useRef<number | null>(null);
+  const dragState = useRef({ startX: 0, deltaX: 0, isDragging: false });
 
-  const maxIndex = useMemo(
-    () => Math.max(0, COLLECTIONS.length - itemsPerView),
-    [itemsPerView],
-  );
+  const extendedCollections = useMemo(() => {
+    const head = COLLECTIONS.slice(0, itemsPerView);
+    const tail = COLLECTIONS.slice(-itemsPerView);
+    return [...tail, ...COLLECTIONS, ...head];
+  }, [itemsPerView]);
+
+  const minIndex = itemsPerView;
+  const maxIndex = itemsPerView + COLLECTIONS.length - 1;
 
   useEffect(() => {
     const updateView = () => {
@@ -62,29 +70,117 @@ export function CollectionCarousel() {
   }, []);
 
   useEffect(() => {
-    setStartIndex((current) => Math.min(current, maxIndex));
-  }, [maxIndex]);
+    setIsTransitionEnabled(false);
+    setCurrentIndex(itemsPerView);
+    const timer = window.setTimeout(() => setIsTransitionEnabled(true), 0);
+    return () => window.clearTimeout(timer);
+  }, [itemsPerView]);
+
+  useEffect(() => {
+    if (isPaused) {
+      return;
+    }
+    const interval = window.setInterval(() => {
+      setCurrentIndex((current) => current + 1);
+    }, 6000);
+
+    return () => window.clearInterval(interval);
+  }, [isPaused]);
 
   const goPrev = () => {
-    setStartIndex((current) => (current === 0 ? maxIndex : current - 1));
+    setCurrentIndex((current) => current - 1);
   };
 
   const goNext = () => {
-    setStartIndex((current) => (current === maxIndex ? 0 : current + 1));
+    setCurrentIndex((current) => current + 1);
+  };
+
+  const pauseAuto = (resume = true) => {
+    setIsPaused(true);
+    if (resumeTimerRef.current) {
+      window.clearTimeout(resumeTimerRef.current);
+    }
+    if (resume) {
+      resumeTimerRef.current = window.setTimeout(() => {
+        setIsPaused(false);
+      }, 1200);
+    }
+  };
+
+  const beginDrag = (clientX: number) => {
+    dragState.current = {
+      startX: clientX,
+      deltaX: 0,
+      isDragging: true,
+    };
+    pauseAuto(false);
+  };
+
+  const updateDrag = (clientX: number) => {
+    if (!dragState.current.isDragging) {
+      return;
+    }
+    dragState.current.deltaX = clientX - dragState.current.startX;
+  };
+
+  const endDrag = () => {
+    if (!dragState.current.isDragging) {
+      return;
+    }
+    const { deltaX } = dragState.current;
+    dragState.current.isDragging = false;
+    if (Math.abs(deltaX) < 40) {
+      return;
+    }
+    if (deltaX > 0) {
+      goPrev();
+    } else {
+      goNext();
+    }
+    pauseAuto();
   };
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="overflow-hidden">
+      <div
+        className="overflow-hidden touch-pan-y select-none"
+        onMouseDown={(event) => beginDrag(event.clientX)}
+        onMouseMove={(event) => updateDrag(event.clientX)}
+        onMouseUp={endDrag}
+        onMouseLeave={endDrag}
+        onWheel={() => pauseAuto()}
+        onTouchStart={(event) => beginDrag(event.touches[0]?.clientX ?? 0)}
+        onTouchMove={(event) => updateDrag(event.touches[0]?.clientX ?? 0)}
+        onTouchEnd={endDrag}
+        onTouchCancel={endDrag}
+      >
         <div
-          className="flex transition-transform duration-500 [--slide-size:100%] md:[--slide-size:33.333%]"
+          className={`flex duration-500 [--slide-size:100%] md:[--slide-size:33.333%] ${
+            isTransitionEnabled ? "transition-transform" : ""
+          }`}
           style={{
-            transform: `translateX(calc(${startIndex} * var(--slide-size) * -1))`,
+            transform: `translateX(calc(${currentIndex} * var(--slide-size) * -1))`,
+          }}
+          onTransitionEnd={() => {
+            if (currentIndex < minIndex) {
+              setIsTransitionEnabled(false);
+              setCurrentIndex(maxIndex);
+              window.requestAnimationFrame(() =>
+                setIsTransitionEnabled(true),
+              );
+            }
+            if (currentIndex > maxIndex) {
+              setIsTransitionEnabled(false);
+              setCurrentIndex(minIndex);
+              window.requestAnimationFrame(() =>
+                setIsTransitionEnabled(true),
+              );
+            }
           }}
         >
-          {COLLECTIONS.map((collection) => (
+          {extendedCollections.map((collection, index) => (
             <div
-              key={collection.title}
+              key={`${collection.title}-${index}`}
               className="w-full flex-shrink-0 px-3 md:w-1/3"
             >
               <a

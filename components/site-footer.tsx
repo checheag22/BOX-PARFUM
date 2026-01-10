@@ -23,14 +23,6 @@ export function SiteFooter() {
             Perfumes árabes inspirados seleccionados con criterio y enfoque en
             calidad.
           </p>
-          <a
-            href="https://wa.me/524778960011"
-            target="_blank"
-            rel="noreferrer"
-            className="w-fit rounded-full bg-neutral-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.35em] text-white transition hover:bg-neutral-800"
-          >
-            WhatsApp directo
-          </a>
         </div>
 
         <div className="flex flex-col gap-3 text-base text-neutral-600">

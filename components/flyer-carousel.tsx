@@ -31,7 +31,7 @@ export function FlyerCarousel() {
   return (
     <section className="mx-auto flex w-full max-w-6xl flex-col gap-4 pb-6">
       <div className="relative overflow-hidden px-3">
-        <div className="relative aspect-[16/5.5] w-full rounded-3xl border border-black/5 bg-white shadow-[0_12px_40px_rgba(0,0,0,0.08)]">
+        <div className="relative aspect-[4/3] w-full rounded-3xl border-0 bg-transparent shadow-none md:aspect-[3331/1250]">
           {active.type === "video" ? (
             <video
               key={active.src}
@@ -40,7 +40,7 @@ export function FlyerCarousel() {
               muted
               loop
               playsInline
-              className="h-full w-full object-cover"
+              className="h-full w-full object-contain md:object-cover md:scale-[1.15]"
             />
           ) : (
             <>
@@ -49,7 +49,7 @@ export function FlyerCarousel() {
                 alt={active.alt}
                 key={active.src}
                 fill
-                className="object-cover"
+                className="object-contain md:object-cover md:scale-[1.15]"
                 sizes="100vw"
                 priority
               />
