@@ -148,7 +148,7 @@ export function CollectionCarousel() {
         onMouseMove={(event) => updateDrag(event.clientX)}
         onMouseUp={endDrag}
         onMouseLeave={endDrag}
-        onWheel={pauseAuto}
+        onWheel={() => pauseAuto()}
         onTouchStart={(event) => beginDrag(event.touches[0]?.clientX ?? 0)}
         onTouchMove={(event) => updateDrag(event.touches[0]?.clientX ?? 0)}
         onTouchEnd={endDrag}
