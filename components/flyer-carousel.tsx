@@ -56,7 +56,7 @@ export function FlyerCarousel() {
               <div className="absolute left-[30%] top-[62%] -translate-x-1/2 -translate-y-1/2">
                 <a
                   href="/catalog?offer=1"
-                  className="inline-flex w-[220px] items-center justify-center rounded-full bg-red-600 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-red-500"
+                  className="inline-flex w-[160px] items-center justify-center rounded-full bg-red-600 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.22em] text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-red-500 md:w-[220px] md:px-4 md:py-2 md:text-[10px] md:tracking-[0.3em]"
                 >
                   Ver ofertas
                 </a>
