@@ -9,10 +9,10 @@ export const perfumes = [
     price: 900,
     currency: "MXN",
     image: "/images/perfumes/kamrah1.avif",
-    hoverImage: "/images/perfumes/kamrah2.webp",
+    hoverImage: "/images/perfumes/Kamrah2.webp",
     images: [
       "/images/perfumes/kamrah1.avif",
-      "/images/perfumes/kamrah2.webp",
+      "/images/perfumes/Kamrah2.webp",
     ],
     notes: {
       top: ["bergamot", "pear", "pink pepper"],
